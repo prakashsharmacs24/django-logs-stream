@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>stream</title>
+    {% load static %}
+    <script src="{% static '/stream/websocketbridge.js' %}" type="text/javascript"></script>
+  </head>
+  <body>
+    <h1>Stream</h1>
+    <ul id="streamList"></ul>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const webSocketBridge = new channels.WebSocketBridge();
+      const nl = document.querySelector("#streamList");
+      webSocketBridge.connect('/ws/stream/');
+      webSocketBridge.listen(function(action, stream) {
+        // console.log(action, '##############')
+        // console.log(stream, '####stream##########')
+        
+        var el = document.createElement("li");
+        el.innerHTML = `${action}`;
+        nl.appendChild(el);
+      })
+      document.ws = webSocketBridge; /* for debugging */
+    })
+    </script>
+   
+  </body>
+</html>
