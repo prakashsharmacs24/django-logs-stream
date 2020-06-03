@@ -3,19 +3,18 @@ import subprocess
 import asyncio
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-
+from .utils import get_last_lines
 class StreamConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
         await self.accept()
         filename = '/var/log/syslog'
-        lines = subprocess.check_output(['tail', '-10', filename])
-        # for line in (thefile.readlines() [-10:]):
-        for line in lines.decode().split('\n'):
+        thefile = open(filename,"rb")
+
+        for line in get_last_lines(thefile, 10):
             if line: 
                 await self.send_json(str(line))
 
-        thefile = open(filename,"r")
         thefile.seek(0, os.SEEK_END)
         # reach the end of file
         while 1:
